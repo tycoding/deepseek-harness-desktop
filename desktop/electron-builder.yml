@@ -1,0 +1,30 @@
+appId: com.tycoding.deepseek-harness-desktop
+productName: DeepSeek Harness
+artifactName: ${productName}-${version}-${os}-${arch}.${ext}
+asar: true
+npmRebuild: false
+nodeGypRebuild: false
+directories:
+  output: dist
+files:
+  - src/**/*
+  - package.json
+extraResources:
+  - from: runtime
+    to: runtime
+  - from: runtime/node_modules
+    to: runtime/node_modules
+mac:
+  category: public.app-category.developer-tools
+  target:
+    - dmg
+win:
+  target:
+    - nsis
+linux:
+  category: Development
+  target:
+    - AppImage
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
