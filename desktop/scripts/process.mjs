@@ -1,4 +1,8 @@
-import spawn from 'cross-spawn'
+import { spawn as nodeSpawn } from 'node:child_process'
+
+const spawn = process.platform === 'win32'
+  ? (await import('cross-spawn')).default
+  : nodeSpawn
 
 export const desktopDir = new URL('..', import.meta.url)
 export const repoRoot = new URL('../..', import.meta.url)
