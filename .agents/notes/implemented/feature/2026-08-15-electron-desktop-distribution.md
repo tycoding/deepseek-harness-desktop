@@ -18,7 +18,7 @@ The desktop repository uses `main`; the official repository uses `master` throug
 
 `desktop/protected-paths.json` lists repository-owned paths excluded from official patches. It protects the entire `desktop/` directory, the root bilingual home page, this Agent Note, and the desktop release workflow. Official source remains authoritative everywhere else. The application icon uses the official DeepSeek asset at `website/public/favicon.svg`.
 
-The runtime preparation uses the official build and deploy paths, copies any required workspace packages omitted from the deployed dependency closure, replaces package-manager links with files, and rebuilds native terminal support for Electron. A smoke check launches the prepared service with Electron's embedded Node.js and requires a valid start page before installer creation.
+The runtime preparation uses the official build and deploy paths through a cross-platform subprocess launcher, copies any required workspace packages omitted from the deployed dependency closure, replaces package-manager links with files, and rebuilds native terminal support for Electron. The launcher resolves Windows command shims without changing the commands used on Unix systems. A smoke check launches the prepared service with Electron's embedded Node.js and requires a valid start page before installer creation.
 
 Each operating system builds its own native artifact: DMG on macOS, an NSIS installer on Windows, and AppImage on Linux. The project does not claim cross-platform installers from one host. The desktop release workflow checks official source daily, builds macOS and Windows installers on native GitHub runners, and creates an immutable `v<official-version>` release only when that tag does not exist.
 
