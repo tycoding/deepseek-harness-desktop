@@ -1,16 +1,18 @@
 {
   "name": "deepseek-harness-desktop",
-  "version": "0.1.0",
+  "version": "0.1.0-rc.5",
   "private": true,
   "description": "Desktop distribution for DeepSeek Harness",
   "type": "module",
   "main": "src/main.mjs",
   "scripts": {
     "sync:official": "node scripts/sync-official.mjs",
+    "check:version": "node scripts/sync-version.mjs --check",
     "prepare:runtime": "node scripts/stage-runtime.mjs",
     "start": "electron .",
     "smoke": "node scripts/smoke-runtime.mjs",
-    "dist": "node scripts/package.mjs"
+    "dist": "node scripts/package.mjs",
+    "dist:current": "node scripts/package-current.mjs"
   },
   "devDependencies": {
     "@electron/rebuild": "4.2.0",

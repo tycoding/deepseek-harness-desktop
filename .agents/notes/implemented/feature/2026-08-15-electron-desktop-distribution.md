@@ -12,13 +12,15 @@ Desktop-only code also needs an independent home so routine official updates do 
 
 ## Decision
 
-The `desktop/` directory owns an Electron application and all desktop packaging scripts. Electron starts the built DeepSeek Harness Web service with its embedded Node.js runtime, loads the loopback-only address in a sandboxed window, and stops the service when the application quits. Installers include the prepared application runtime and production dependencies.
+The `desktop/` directory owns an Electron application and all desktop packaging scripts. Electron shows a fixed bundled loading page while it starts the built DeepSeek Harness Web service with its embedded Node.js runtime, then loads the loopback-only address in a sandboxed window and stops the service when the application quits. Navigation accepts only the bundled loading page and the active local-service origin; external links open in the system browser. Installers include the prepared application runtime and production dependencies.
 
-The desktop repository uses `main`; the official repository uses `master` through the `upstream` remote. `desktop/upstream.json` records the official commit represented by the desktop source. Every installer build requires a clean desktop branch, fetches official `master`, applies the changes after that recorded commit, and commits the new official position before installing dependencies or building. A conflicting update or rewritten official history stops and rolls back the update before packaging begins.
+The desktop repository uses `main`; the official repository uses `master` through the `upstream` remote. `desktop/upstream.json` records the official commit represented by the desktop source. Every installer build requires a clean desktop branch, fetches official `master`, applies the changes after that recorded commit, aligns the desktop package version with the official root package, and commits the new official position before installing dependencies or building. A conflicting update or rewritten official history stops and rolls back the update before packaging begins.
+
+`desktop/protected-paths.json` lists repository-owned paths excluded from official patches. It protects the entire `desktop/` directory, the root bilingual home page, this Agent Note, and the desktop release workflow. Official source remains authoritative everywhere else. The application icon uses the official DeepSeek asset at `website/public/favicon.svg`.
 
 The runtime preparation uses the official build and deploy paths, copies any required workspace packages omitted from the deployed dependency closure, replaces package-manager links with files, and rebuilds native terminal support for Electron. A smoke check launches the prepared service with Electron's embedded Node.js and requires a valid start page before installer creation.
 
-Each operating system builds its own native artifact: DMG on macOS, an NSIS installer on Windows, and AppImage on Linux. The project does not claim cross-platform installers from one host.
+Each operating system builds its own native artifact: DMG on macOS, an NSIS installer on Windows, and AppImage on Linux. The project does not claim cross-platform installers from one host. The desktop release workflow checks official source daily, builds macOS and Windows installers on native GitHub runners, and creates an immutable `v<official-version>` release only when that tag does not exist.
 
 ## Alternatives considered
 
@@ -37,5 +39,7 @@ Each operating system builds its own native artifact: DMG on macOS, an NSIS inst
 - The installed application runs without a system Node.js or npm installation, at the cost of a larger download because Electron and the service runtime are bundled.
 - Installer builds require Git, Node.js, pnpm, npm dependencies under `desktop/`, and native build tools; these are build-machine requirements, not end-user requirements.
 - Every installer build consumes official `master` before packaging, so a conflicting upstream change blocks the build instead of producing an ambiguous artifact.
+- Explicit protected paths keep repository-owned desktop policy and documentation stable, so maintainers must add any new out-of-tree desktop file to the manifest.
 - Native dependencies and installers are prepared per operating system, so release automation needs one build host for every supported platform.
+- Official commits that retain an already published version update `main` without replacing release files; a new official version creates the next release.
 - The smoke check verifies service startup and the real start page; platform release jobs remain responsible for installer installation and signing checks.

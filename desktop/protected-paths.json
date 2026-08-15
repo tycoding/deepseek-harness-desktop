@@ -1,0 +1,11 @@
+[
+  ".agents/notes/implemented/feature/2026-08-15-electron-desktop-distribution.i18n.yaml",
+  ".agents/notes/implemented/feature/2026-08-15-electron-desktop-distribution.md",
+  ".agents/notes/implemented/feature/2026-08-15-electron-desktop-distribution.zh.md",
+  ".github/workflows/desktop-release.yml",
+  "README.en.md",
+  "README.i18n.yaml",
+  "README.md",
+  "README.zh.md",
+  "desktop"
+]

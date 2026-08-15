@@ -3,6 +3,7 @@ import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { pathToFileURL } from 'node:url'
 import { run, repoRoot } from './process.mjs'
+import { syncDesktopVersion } from './sync-version.mjs'
 
 const OFFICIAL_REMOTE = 'upstream'
 const OFFICIAL_URL = 'https://github.com/deepseek-ai/deepseek-harness.git'
@@ -10,6 +11,7 @@ const OFFICIAL_BRANCH = 'master'
 const DESKTOP_BRANCH = 'main'
 const repoPath = fileURLToPath(repoRoot)
 const upstreamStatePath = resolve(repoPath, 'desktop', 'upstream.json')
+const protectedPathsPath = resolve(repoPath, 'desktop', 'protected-paths.json')
 
 async function git(args, options = {}) {
   if (typeof options === 'boolean') options = { capture: options }
@@ -22,6 +24,14 @@ async function readUpstreamState() {
     throw new Error(`desktop/upstream.json must identify ${OFFICIAL_URL} ${OFFICIAL_BRANCH} with a full commit hash.`)
   }
   return state
+}
+
+async function readProtectedPaths() {
+  const paths = JSON.parse(await readFile(protectedPathsPath, 'utf8'))
+  if (!Array.isArray(paths) || paths.length === 0 || paths.some(path => typeof path !== 'string' || path === '' || path.startsWith('/'))) {
+    throw new Error('desktop/protected-paths.json must contain repository-relative paths.')
+  }
+  return paths
 }
 
 export async function syncOfficial() {
@@ -57,20 +67,30 @@ export async function syncOfficial() {
   } catch {
     throw new Error(`Recorded official commit ${state.commit} is not an ancestor of ${target}. Refusing to apply a rewritten upstream history.`)
   }
-  if (state.commit === targetCommit) {
+  const upstreamChanged = state.commit !== targetCommit
+  const protectedPaths = await readProtectedPaths()
+  if (!upstreamChanged) {
+    const version = await syncDesktopVersion()
+    if (version.changed) {
+      await git(['add', '--', 'desktop/package.json', 'desktop/package-lock.json'])
+      await git(['commit', '-m', `chore: align desktop version with official ${version.version}`])
+      return
+    }
     console.log('Official source is already current.')
     return
   }
 
   try {
     const patch = (await git([
-      'diff', '--binary', '--full-index', state.commit, target,
+      'diff', '--binary', '--full-index', state.commit, target, '--', '.',
+      ...protectedPaths.map(path => `:(exclude,literal)${path}`),
     ], { capture: true, trimOutput: false })).stdout
     if (patch !== '') {
       await git(['apply', '--index', '--3way', '--whitespace=nowarn', '-'], { input: patch })
     }
     await writeFile(upstreamStatePath, `${JSON.stringify({ ...state, commit: targetCommit }, null, 2)}\n`)
-    await git(['add', '--', 'desktop/upstream.json'])
+    await syncDesktopVersion()
+    await git(['add', '--', 'desktop/upstream.json', 'desktop/package.json', 'desktop/package-lock.json'])
     await git(['commit', '-m', `chore: sync official master to ${targetCommit.slice(0, 12)}`])
   } catch (error) {
     try {

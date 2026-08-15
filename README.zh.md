@@ -1,74 +1,78 @@
-# DeepSeek Harness
+<div align="center">
+  <img src="website/public/favicon.svg" width="112" height="112" alt="DeepSeek">
+  <h1>DeepSeek Harness Desktop</h1>
+  <p><strong>让官方 DeepSeek Harness 开箱即用地运行在桌面上。</strong></p>
+  <p>自动跟进官方源码，内置完整运行环境，为 macOS 和 Windows 提供无需另装 Node.js 的桌面体验。</p>
+</div>
 
-[English](README.md) | 中文
+[English](README.en.md) | 中文 | [主文档](README.md)
 
-DeepSeek Harness（`dsh`）是由 [DeepSeek AI](https://deepseek.com) 开发的开源 agent harness（智能体框架）。
+## 项目简介
 
-它采用**一切皆插件**的架构，并由 [Cordis](https://github.com/cordiverse/cordis) 驱动，其设计参见论文 [_A Programming Paradigm for Spatiotemporal Composability_](https://github.com/cordiverse/paper)。
+DeepSeek Harness Desktop 是 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 的非官方桌面发行版。它保留官方 Web 应用和本地能力，只负责同步源码、准备运行环境并生成可以直接安装的软件。
 
-## 开发者预览
+项目仍处于开发者预览阶段。桌面版跟随官方快速迭代，功能和数据格式可能发生不兼容变化。
 
-DeepSeek Harness 目前处于 _开发者预览_ 阶段，正在快速迭代。**未来将出现破坏兼容性的变更。**
+安装包请前往 [Releases](https://github.com/tycoding/deepseek-harness-desktop/releases) 下载。最终用户不需要安装 Node.js、npm 或 pnpm。
 
-## 运行
+## 什么是 Harness
 
-### 通过 `npm` 运行
+Harness 可以理解为 agent（智能体）的运行和组织框架。它把模型、工具、会话、权限、工作流和扩展能力组合在一起，让 agent 不只是回答问题，还能在明确规则下持续完成任务。
 
-安装 `Node.js`，然后运行：
+DeepSeek Harness 的核心原则是「一切皆插件」。模型提供方、工具、存储、终端和工作流都可以独立组合或替换；桌面版在这套能力之外增加安装、启动和退出管理，不改变官方产品本身的工作方式。
+
+<a id="run"></a><a id="run-from-source"></a>
+
+## 打包规则
+
+- 桌面版版本号始终读取官方根目录的 `package.json`，发布标签使用 `v<官方版本号>`。
+- macOS 生成 DMG，Windows 生成安装程序；GitHub Release 同时保留对应版本的源码下载。
+- 每次正式打包前必须先完成官方源码同步、官方项目构建和真实启动检查，任一步失败都会停止发布。
+- 安装包包含运行所需的环境和依赖，构建电脑仍需安装 Git、Node.js、pnpm 及当前系统要求的本地构建工具。
+- 桌面图标直接使用官方仓库提供的 DeepSeek 图标。
+
+本地生成当前系统安装包：
 
 ```sh
-npx @deepseek-ai/dsh web
+cd desktop
+npm install
+npm run dist
 ```
 
-该命令会启动 Web UI，默认地址为 `http://127.0.0.1:3080`。详见 [Web UI 指南](docs/user/guide/index.md)。
+生成结果位于 `desktop/dist/`。自动发布由 [桌面发布流程](.github/workflows/desktop-release.yml) 完成。
 
-### 从源码运行
+## 同步规则
 
-如需从仓库源码运行：
+- 官方来源固定为 `deepseek-ai/deepseek-harness` 的 `master` 分支，本仓库使用 `main` 分支。
+- `desktop/upstream.json` 记录当前已同步的官方提交；每次执行 `npm run dist` 都会先检查并拉取官方最新代码。
+- `desktop/protected-paths.json` 列出本仓库独立维护的内容。同步不会改写桌面代码、双语首页、桌面设计记录和发布流程。
+- 官方历史被改写或更新产生冲突时，同步会撤销本次操作并停止，不会继续打包不完整的源码。
+- 自动发布每天检查一次官方版本；已发布的版本不会被重复覆盖，官方版本号变化后才创建新版本。
 
-```sh
-git clone https://github.com/deepseek-ai/deepseek-harness.git
-cd deepseek-harness
-pnpm install
-pnpm run build
-pnpm dsh web
-```
+## 桌面端代码
 
-## 社区与支持
+| 位置 | 用途 |
+|---|---|
+| `desktop/src/` | 桌面窗口、官方服务启动与退出管理 |
+| `desktop/scripts/` | 官方同步、版本对齐、运行环境准备、启动检查和打包 |
+| `desktop/electron-builder.yml` | macOS、Windows 和 Linux 安装包规则 |
+| `desktop/upstream.json` | 当前对应的官方源码版本 |
+| `desktop/protected-paths.json` | 同步时必须保留的本仓库文件 |
+| `.github/workflows/desktop-release.yml` | 双平台构建与版本发布 |
 
-- 欢迎通过 [GitHub Discussions](https://github.com/deepseek-ai/deepseek-harness/discussions) 提交反馈或 bug 报告。
-- 为你的插件仓库添加 [`dsh-plugin`](https://github.com/topics/dsh-plugin) 话题，便于被发现。
-- 欢迎加入 DeepSeek Harness 企微群：扫码添加企微小助手并填写入群问卷，完成后小助手会邀请你入群。
+更详细的构建说明见 [桌面端说明](desktop/README.zh.md)。
 
-<table>
-  <thead>
-    <tr>
-      <th align="center">企微小助手</th>
-      <th align="center">入群问卷</th>
-      <th align="center">微信公众号</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td align="center"><img src="assets/community-wecom-assistant.png" alt="DeepSeek Harness 企微小助手二维码" width="180" height="180"></td>
-      <td align="center"><a href="https://trtgsjkv6r.feishu.cn/share/base/form/shrcnIt5twSVdLGD52KJBckGCgg"><img src="assets/community-wecom-survey.png" alt="DeepSeek Harness 入群问卷二维码" width="180" height="180"></a></td>
-      <td align="center"><img src="assets/community-wechat-official-account.png" alt="DeepSeek Harness 团队微信公众号二维码" width="180" height="180"></td>
-    </tr>
-  </tbody>
-</table>
+## 未来规划
 
-## 参与贡献
+- 持续跟进官方能力和桌面适配，缩短官方更新到桌面版本之间的时间。
+- 完成 macOS 与 Windows 的正式签名，减少首次安装时的系统安全提示。
+- 增加应用内更新，让用户不必手动下载每个新版本。
+- 改进首次启动、配置迁移、故障提示和多平台安装体验。
+- 在官方发布节奏稳定后，补充 Linux 安装包和更多系统架构。
 
-参见 [CONTRIBUTING.md](CONTRIBUTING.md)。
+## License 与官方地址
 
-## 开发
-
-请先阅读[开发指南](docs/development.md)与[架构文档](docs/architecture.md)。
-
-面向 agent：请遵循 [AGENTS.md](AGENTS.md)。
-
-## 许可证
-
-[MIT](LICENSE)
-
-第三方依赖及其许可证见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
+- License：[MIT](LICENSE)
+- 第三方许可：[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)
+- DeepSeek Harness 官方仓库：[https://github.com/deepseek-ai/deepseek-harness](https://github.com/deepseek-ai/deepseek-harness)
+- DeepSeek 官方网站：[https://deepseek.com](https://deepseek.com)

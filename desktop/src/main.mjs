@@ -2,6 +2,7 @@ import { appendFileSync, existsSync, mkdirSync } from 'node:fs'
 import { homedir } from 'node:os'
 import { join } from 'node:path'
 import { spawn } from 'node:child_process'
+import { pathToFileURL } from 'node:url'
 import { app, BrowserWindow, dialog, shell } from 'electron'
 
 const WEB_URL = /\bdsh web:\s+(http:\/\/(?:127\.0\.0\.1|localhost|\[::1\]):\d+)\b/
@@ -98,8 +99,7 @@ function startBackend() {
 }
 
 function loadingPage() {
-  const html = `<!doctype html><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'"><title>DeepSeek Harness</title><style>html,body{height:100%;margin:0}body{display:grid;place-items:center;background:#f7f7f5;color:#181816;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.wrap{display:grid;justify-items:center;gap:18px}.mark{width:42px;height:42px;border:3px solid #d5d5cf;border-top-color:#181816;border-radius:50%;animation:spin .8s linear infinite}.name{font-size:15px;font-weight:600;letter-spacing:0}@keyframes spin{to{transform:rotate(360deg)}}@media(prefers-color-scheme:dark){body{background:#171716;color:#f4f4f0}.mark{border-color:#3a3a37;border-top-color:#f4f4f0}}</style><div class="wrap"><div class="mark"></div><div class="name">DeepSeek Harness</div></div>`
-  return `data:text/html;charset=utf-8,${encodeURIComponent(html)}`
+  return pathToFileURL(join(app.getAppPath(), 'src', 'loading.html')).href
 }
 
 async function createWindow() {
@@ -117,6 +117,7 @@ async function createWindow() {
       sandbox: true,
     },
   })
+  const initialUrl = backendUrl ?? loadingPage()
   mainWindow.once('ready-to-show', () => { mainWindow?.show() })
   mainWindow.on('closed', () => { mainWindow = undefined })
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
@@ -124,11 +125,12 @@ async function createWindow() {
     return { action: 'deny' }
   })
   mainWindow.webContents.on('will-navigate', (event, url) => {
+    if (url === initialUrl) return
     if (backendUrl !== undefined && new URL(url).origin === new URL(backendUrl).origin) return
     event.preventDefault()
     if (/^(https?:|mailto:)/.test(url)) void shell.openExternal(url)
   })
-  await mainWindow.loadURL(backendUrl ?? loadingPage())
+  await mainWindow.loadURL(initialUrl)
 }
 
 function stopBackend() {
