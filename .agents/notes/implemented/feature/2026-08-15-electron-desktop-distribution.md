@@ -20,7 +20,7 @@ The desktop repository uses `main`; the official repository uses `master` throug
 
 The runtime preparation uses the official build and deploy paths through a cross-platform subprocess launcher, copies any required workspace packages omitted from the deployed dependency closure, replaces package-manager links with files, and rebuilds native terminal support for Electron. The launcher resolves Windows command shims without changing the commands used on Unix systems. A smoke check launches the prepared service with Electron's embedded Node.js and requires a valid start page before installer creation.
 
-Each operating system builds its own native artifact: DMG on macOS, an NSIS installer on Windows, and AppImage on Linux. The project does not claim cross-platform installers from one host. The desktop release workflow checks official source daily, builds macOS and Windows installers on native GitHub runners, and creates an immutable `v<official-version>` release only when that tag does not exist.
+Each operating system builds its own native artifact: DMG on macOS, an NSIS installer on Windows, and AppImage on Linux. The project does not claim cross-platform installers from one host. The desktop release workflow checks official `master` every 30 minutes, synchronizes new commits to `main`, builds macOS and Windows installers on native GitHub runners when the official version changes, and creates an immutable `v<official-version>` release only when that tag does not exist. Every created release becomes the repository's latest usable release even when the official version contains a prerelease identifier.
 
 ## Alternatives considered
 
@@ -42,4 +42,5 @@ Each operating system builds its own native artifact: DMG on macOS, an NSIS inst
 - Explicit protected paths keep repository-owned desktop policy and documentation stable, so maintainers must add any new out-of-tree desktop file to the manifest.
 - Native dependencies and installers are prepared per operating system, so release automation needs one build host for every supported platform.
 - Official commits that retain an already published version update `main` without replacing release files; a new official version creates the next release.
+- Treating an official prerelease version as this repository's latest usable release keeps installers visible on the repository page while retaining the official version identifier in the tag and title.
 - The smoke check verifies service startup and the real start page; platform release jobs remain responsible for installer installation and signing checks.

@@ -13,7 +13,11 @@ DeepSeek Harness Desktop is an unofficial desktop distribution of [DeepSeek Harn
 
 The project remains a developer preview. The desktop distribution follows rapid official development, so features and data formats may change incompatibly.
 
-Download installers from [Releases](https://github.com/tycoding/deepseek-harness-desktop/releases). End users do not need Node.js, npm, or pnpm.
+Download the latest installers from [Releases](https://github.com/tycoding/deepseek-harness-desktop/releases/latest). End users do not need Node.js, npm, or pnpm.
+
+## Preview
+
+![DeepSeek Harness Desktop preview](desktop/assets/screenshots/deepseek-harness-desktop.png)
 
 ## What Harness Means
 
@@ -27,6 +31,7 @@ DeepSeek Harness follows an "everything is a plugin" principle. Model providers,
 
 - The desktop version always comes from the official root `package.json`, and release tags use `v<official-version>`.
 - macOS builds a DMG and Windows builds an installer. Each GitHub Release also provides source downloads for that version.
+- Every new version becomes this repository's latest usable release, including official versions with prerelease identifiers such as `rc`.
 - Every release build must first synchronize official source, build the official project, and pass a real startup check. Any failure stops publication.
 - Installers contain the runtime and dependencies needed by the application. Build machines still require Git, Node.js, pnpm, and platform-native build tools.
 - The application icon comes directly from the official repository's DeepSeek icon.
@@ -47,7 +52,7 @@ The installer is written to `desktop/dist/`. The [desktop release workflow](.git
 - `desktop/upstream.json` records the synchronized official commit. Every `npm run dist` checks and fetches official source first.
 - `desktop/protected-paths.json` lists content owned by this repository. Synchronization never rewrites desktop code, bilingual home pages, the desktop design record, or the release workflow.
 - Rewritten official history or an update conflict rolls the attempt back and stops the build instead of packaging partial source.
-- Automated release checks run daily. Published versions are immutable, and a new release is created only after the official version changes.
+- Automated release checks inspect official `master` every 30 minutes and synchronize new commits to this repository's `main`. Published versions remain immutable, and an official version change creates the next release.
 
 ## Desktop Code
 

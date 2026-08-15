@@ -13,7 +13,11 @@ DeepSeek Harness Desktop 是 [DeepSeek Harness](https://github.com/deepseek-ai/d
 
 项目仍处于开发者预览阶段。桌面版跟随官方快速迭代，功能和数据格式可能发生不兼容变化。
 
-安装包请前往 [Releases](https://github.com/tycoding/deepseek-harness-desktop/releases) 下载。最终用户不需要安装 Node.js、npm 或 pnpm。
+最新安装包请前往 [Releases](https://github.com/tycoding/deepseek-harness-desktop/releases/latest) 下载。最终用户不需要安装 Node.js、npm 或 pnpm。
+
+## 运行效果
+
+![DeepSeek Harness Desktop 运行效果](desktop/assets/screenshots/deepseek-harness-desktop.png)
 
 ## 什么是 Harness
 
@@ -27,6 +31,7 @@ DeepSeek Harness 的核心原则是「一切皆插件」。模型提供方、工
 
 - 桌面版版本号始终读取官方根目录的 `package.json`，发布标签使用 `v<官方版本号>`。
 - macOS 生成 DMG，Windows 生成安装程序；GitHub Release 同时保留对应版本的源码下载。
+- 每个新版本都会成为本仓库的最新可用版本，即使官方版本号包含 `rc` 等预发布标识。
 - 每次正式打包前必须先完成官方源码同步、官方项目构建和真实启动检查，任一步失败都会停止发布。
 - 安装包包含运行所需的环境和依赖，构建电脑仍需安装 Git、Node.js、pnpm 及当前系统要求的本地构建工具。
 - 桌面图标直接使用官方仓库提供的 DeepSeek 图标。
@@ -47,7 +52,7 @@ npm run dist
 - `desktop/upstream.json` 记录当前已同步的官方提交；每次执行 `npm run dist` 都会先检查并拉取官方最新代码。
 - `desktop/protected-paths.json` 列出本仓库独立维护的内容。同步不会改写桌面代码、双语首页、桌面设计记录和发布流程。
 - 官方历史被改写或更新产生冲突时，同步会撤销本次操作并停止，不会继续打包不完整的源码。
-- 自动发布每天检查一次官方版本；已发布的版本不会被重复覆盖，官方版本号变化后才创建新版本。
+- 自动发布每 30 分钟检查一次官方 `master`；发现新提交就同步到本仓库 `main`，官方版本号变化后再创建新版本，已发布的版本不会被重复覆盖。
 
 ## 桌面端代码
 

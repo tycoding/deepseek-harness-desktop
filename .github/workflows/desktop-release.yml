@@ -3,7 +3,7 @@ name: Desktop release
 on:
   workflow_dispatch:
   schedule:
-    - cron: '17 18 * * *'
+    - cron: '17,47 * * * *'
 
 permissions:
   contents: read
@@ -123,13 +123,9 @@ jobs:
           RELEASE_TAG: ${{ needs.sync.outputs.tag }}
           RELEASE_VERSION: ${{ needs.sync.outputs.version }}
         run: |
-          prerelease=()
-          if [[ "$RELEASE_VERSION" == *-* ]]; then
-            prerelease=(--prerelease)
-          fi
           gh release create "$RELEASE_TAG" artifacts/* \
             --repo "$GITHUB_REPOSITORY" \
             --target "$RELEASE_SHA" \
             --title "DeepSeek Harness Desktop ${RELEASE_VERSION}" \
             --notes "基于 DeepSeek Harness 官方 ${RELEASE_VERSION} 版本构建。包含 macOS DMG、Windows 安装程序以及 GitHub 自动生成的源码包。" \
-            "${prerelease[@]}"
+            --latest
