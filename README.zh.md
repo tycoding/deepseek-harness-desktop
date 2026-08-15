@@ -15,6 +15,15 @@ DeepSeek Harness Desktop 是 [DeepSeek Harness](https://github.com/deepseek-ai/d
 
 最新安装包请前往 [Releases](https://github.com/tycoding/deepseek-harness-desktop/releases/latest) 下载。最终用户不需要安装 Node.js、npm 或 pnpm。
 
+## 产品特性
+
+- 完整打包官方前端、本地服务和运行环境，不是简单嵌套在线网页。
+- 安装后直接在本机运行，最终用户无需安装 Node.js、npm 或 pnpm。
+- 每 30 分钟检查官方 `master`，自动把新提交同步到本仓库 `main`。
+- 官方版本变化后，自动构建并发布 macOS 和 Windows 安装包。
+- 同步、构建或启动检查失败时停止发布，避免产生不可用版本。
+- 官方同步不会覆盖桌面代码、发布流程、应用资源和自有文档。
+
 ## 运行效果
 
 ![DeepSeek Harness Desktop 运行效果](desktop/assets/screenshots/deepseek-harness-desktop.png)

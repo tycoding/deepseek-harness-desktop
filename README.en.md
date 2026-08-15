@@ -15,6 +15,15 @@ The project remains a developer preview. The desktop distribution follows rapid 
 
 Download the latest installers from [Releases](https://github.com/tycoding/deepseek-harness-desktop/releases/latest). End users do not need Node.js, npm, or pnpm.
 
+## Product Features
+
+- Packages the official frontend, local service, and runtime together instead of wrapping an online page.
+- Runs locally after installation without requiring end users to install Node.js, npm, or pnpm.
+- Checks official `master` every 30 minutes and synchronizes new commits to this repository's `main`.
+- Builds and publishes macOS and Windows installers when the official version changes.
+- Stops publication when synchronization, building, or startup checks fail, preventing unusable releases.
+- Preserves desktop code, release automation, application assets, and repository-owned documentation during official synchronization.
+
 ## Preview
 
 ![DeepSeek Harness Desktop preview](desktop/assets/screenshots/deepseek-harness-desktop.png)
