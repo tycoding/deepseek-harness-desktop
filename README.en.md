@@ -15,6 +15,24 @@ The project remains a developer preview. The desktop distribution follows rapid 
 
 Download the latest installers from [Releases](https://github.com/tycoding/deepseek-harness-desktop/releases/latest). End users do not need Node.js, npm, or pnpm.
 
+## Installing the Unsigned macOS Application
+
+The current macOS installer has not yet been signed and notarized by Apple. Download it only from this project's [Releases](https://github.com/tycoding/deepseek-harness-desktop/releases/latest). macOS may show one of these security messages on first launch.
+
+| Message | Cause | Resolution |
+|---|---|---|
+| "The developer cannot be verified" or "Apple cannot check it for malicious software" | macOS blocks the unsigned application | In Finder's Applications folder, Control-click `DeepSeek Harness`, choose Open, then choose Open again in the dialog |
+| "DeepSeek Harness.app is damaged and can't be opened. You should move it to the Trash" | macOS added a quarantine attribute to the downloaded application | Quit the application, confirm that it is in Applications, run the command below in Terminal, and open it again |
+| "Cannot be opened because it is from an unidentified developer" | macOS cannot find a trusted developer signature | Open System Settings → Privacy & Security, find the blocked application message, and choose Open Anyway |
+
+For the "damaged" message, run:
+
+```sh
+xattr -dr com.apple.quarantine "/Applications/DeepSeek Harness.app"
+```
+
+This command removes the quarantine attribute from this application only; it does not disable security protection for the Mac. Run it only for an installer downloaded from this project's Releases. It is normally needed once for the installed version, but a newly downloaded version may require it again.
+
 ## Product Features
 
 - Packages the official frontend, local service, and runtime together instead of wrapping an online page.

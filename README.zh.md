@@ -15,6 +15,24 @@ DeepSeek Harness Desktop 是 [DeepSeek Harness](https://github.com/deepseek-ai/d
 
 最新安装包请前往 [Releases](https://github.com/tycoding/deepseek-harness-desktop/releases/latest) 下载。最终用户不需要安装 Node.js、npm 或 pnpm。
 
+## macOS 未签名应用安装说明
+
+当前 macOS 安装包尚未完成 Apple 开发者签名与公证。请只从本项目的 [Releases](https://github.com/tycoding/deepseek-harness-desktop/releases/latest) 下载；首次启动时，macOS 可能显示以下安全提示。
+
+| 报错提示 | 原因 | 解决方法 |
+|---|---|---|
+| 「无法验证开发者」或「Apple 无法检查其是否包含恶意软件」 | macOS 拦截了未签名应用 | 在“访达”的“应用程序”中右键 `DeepSeek Harness`，选择“打开”，再在弹窗中选择“打开” |
+| 「已损坏，无法打开。您应该将它移到废纸篓」 | macOS 对下载的应用添加了隔离标记 | 退出应用，确认它位于“应用程序”目录，然后在“终端”执行下方命令并重新打开 |
+| 「打不开，因为来自身份不明的开发者」 | macOS 未识别到可信的开发者签名 | 打开“系统设置 → 隐私与安全性”，找到对应的拦截提示并选择“仍要打开” |
+
+处理“已损坏”提示：
+
+```sh
+xattr -dr com.apple.quarantine "/Applications/DeepSeek Harness.app"
+```
+
+该命令只移除这份应用的隔离标记，不会关闭整台 Mac 的安全保护。请仅对从本项目 Releases 下载的安装包执行；当前安装的版本通常只需处理一次，重新下载新版本后可能需要再次处理。
+
 ## 产品特性
 
 - 完整打包官方前端、本地服务和运行环境，不是简单嵌套在线网页。
