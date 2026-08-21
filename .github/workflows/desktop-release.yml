@@ -144,6 +144,7 @@ jobs:
               --title "DeepSeek Harness Desktop ${RELEASE_VERSION}" \
               --notes "基于 DeepSeek Harness 官方 ${RELEASE_VERSION} 版本构建。包含 macOS DMG、Windows 安装程序以及 GitHub 自动生成的源码包。"
           fi
-          find artifacts -type f \( -name '*.dmg' -o -name '*.exe' \) -print0 | \
+          gh release delete-asset "$RELEASE_TAG" OpenConsole.exe --repo "$GITHUB_REPOSITORY" --yes >/dev/null 2>&1 || true
+          find artifacts -maxdepth 1 -type f \( -name '*.dmg' -o -name '*.exe' \) -print0 | \
             xargs -0 gh release upload "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --clobber
           gh release edit "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --latest
