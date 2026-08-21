@@ -1,0 +1,151 @@
+:root {
+  background: #f7f7f5 !important;
+}
+
+body,
+#root,
+[data-dsh-app-frame] {
+  background: var(--dsw-alias-bg-base, #f7f7f5) !important;
+}
+
+[data-dsh-app-frame],
+[data-dsh-app-frame] .handle {
+  transition: none !important;
+}
+
+[data-shell-sidebar] {
+  position: relative;
+  margin: 10px 0 10px 10px;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 28%) !important;
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--dsw-specific-sidebar-fill) 92%, transparent) !important;
+  box-shadow:
+    0 18px 48px rgb(0 0 0 / 12%),
+    inset 0 1px 0 rgb(255 255 255 / 34%),
+    inset 0 0 0 1px rgb(255 255 255 / 8%);
+}
+
+[data-dsh-app-frame][data-sidebar-collapsed] [data-shell-sidebar] {
+  margin: 0;
+  overflow: visible;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none;
+  pointer-events: none;
+}
+
+/* Full-window dialogs remain viewport-sized instead of inheriting the
+   sidebar's rounded clipping and backdrop-filter containing block. */
+[data-shell-sidebar]:has([role='dialog']) {
+  overflow: visible;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+[data-shell-sidebar]::before {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 48px;
+  content: '';
+  -webkit-app-region: drag;
+}
+
+[data-shell-sidebar] [data-sidebar-shell] {
+  padding-top: 0 !important;
+  background: transparent !important;
+}
+
+[data-sidebar-shell][data-sidebar-wide] [data-sidebar-window-row] {
+  margin-right: 6px;
+}
+
+[data-dsh-app-frame][data-sidebar-collapsed] [data-shell-sidebar] [data-sidebar-shell] > :not([data-sidebar-window-row]) {
+  display: none;
+}
+
+[data-dsh-app-frame][data-sidebar-collapsed] [data-shell-sidebar] [data-sidebar-window-row] {
+  position: fixed;
+  z-index: 30;
+  top: 21px;
+  left: 86px;
+  display: flex;
+  width: 28px;
+  height: 28px;
+  margin: 0;
+  overflow: visible;
+  pointer-events: auto;
+}
+
+[data-dsh-app-frame][data-sidebar-collapsed] [data-shell-sidebar] [data-sidebar-toggle] {
+  width: 28px;
+  height: 28px;
+}
+
+[data-shell-sidebar] button,
+[data-shell-sidebar] input,
+[data-shell-sidebar] [role='button'],
+[data-shell-sidebar] [role='treeitem'] {
+  -webkit-app-region: no-drag;
+}
+
+[data-shell-center],
+[data-shell-details],
+[data-shell-utility-panel],
+[data-shell-bottom-panel] {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  background: var(--dsw-alias-bg-base);
+}
+
+[data-shell-center] {
+  margin-left: 10px;
+  border-radius: 16px 0 0 16px;
+  box-shadow: 0 18px 48px rgb(0 0 0 / 8%);
+}
+
+[data-shell-details] {
+  container-type: inline-size;
+}
+
+[data-shell-utility-panel]:not(:empty) {
+  margin-right: 10px;
+  border-radius: 0 16px 16px 0;
+}
+
+[data-shell-bottom-panel]:not(:empty) {
+  margin: 0 10px 10px;
+  border-radius: 0 0 16px 16px;
+}
+
+[data-dsh-app-frame]:has([data-shell-bottom-panel]:not(:empty)) [data-shell-center],
+[data-dsh-app-frame]:has([data-shell-bottom-panel]:not(:empty)) [data-shell-details],
+[data-dsh-app-frame]:has([data-shell-bottom-panel]:not(:empty)) [data-shell-utility-panel] {
+  margin-bottom: 0;
+}
+
+body[data-ds-dark-theme] [data-shell-sidebar] {
+  border-color: rgb(255 255 255 / 13%) !important;
+  box-shadow:
+    0 18px 52px rgb(0 0 0 / 32%),
+    inset 0 1px 0 rgb(255 255 255 / 14%),
+    inset 0 0 0 1px rgb(255 255 255 / 5%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    background: #171716 !important;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  [data-shell-sidebar] {
+    background: var(--dsw-specific-sidebar-fill) !important;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}

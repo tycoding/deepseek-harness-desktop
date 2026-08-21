@@ -501,7 +501,7 @@ export const CLIENT_SLOT_API: readonly ClientSlotEntry[] = [
     keyDomain: '',
     hookContext: '',
     slotInject: '',
-    declaredBy: 'an entry in \'conversation\' (client-ui-conversation), so it exists while that entry is mounted',
+    declaredBy: 'the runtime itself (built in; always present)',
     occupants: [
       'client-ui-brand-official OfficialBrandMark',
     ],
@@ -590,7 +590,7 @@ export const CLIENT_SLOT_API: readonly ClientSlotEntry[] = [
     keyDomain: '',
     hookContext: '',
     slotInject: '',
-    declaredBy: 'an entry in \'conversation.composer.bar\' (client-ui-conversation), so it exists while that entry is mounted',
+    declaredBy: 'the runtime itself (built in; always present)',
     occupants: [
       'client-ui-attachment ComposerAttachments',
     ],
@@ -892,7 +892,7 @@ export const CLIENT_SLOT_API: readonly ClientSlotEntry[] = [
     keyDomain: '',
     hookContext: '',
     slotInject: '',
-    declaredBy: 'an entry in \'conversation.view\' (client-ui-conversation), so it exists while that entry is mounted',
+    declaredBy: 'the runtime itself (built in; always present)',
     occupants: [
       'client-ui-attachment MessageImages',
     ],
@@ -1054,6 +1054,7 @@ export const CLIENT_SLOT_API: readonly ClientSlotEntry[] = [
     slotInject: '',
     declaredBy: 'an entry in \'conversation.session.header\' (client-ui-conversation), so it exists while that entry is mounted',
     occupants: [
+      'client-ui-browser BrowserTrigger id \'browser\'',
       'session-log-export SessionLogDownloadHeaderAction id \'session-log-download\'',
     ],
     replaceRisk: 'none',
@@ -1516,6 +1517,32 @@ export const CLIENT_SLOT_API: readonly ClientSlotEntry[] = [
     source: 'packages/client/ui-settings/src/client/contract/slots.ts:23',
   },
   {
+    key: 'shell.bottom-panel',
+    kind: 'single',
+    scope: 'root',
+    summary: 'Docked utility area below the conversation and right-side columns.',
+    doc: 'Docked utility area below the conversation and right-side columns.',
+    registerOptions: [],
+    ownerProps: [
+      '/** Bottom panel owner share: the occupant owns its visible height and contents. */\nexport interface BottomPanelOwnerProps {}',
+    ],
+    ownerPropsReferences: [],
+    standardProps: [
+      'useSessions: SnapshotSelectorHook<SessionListState>',
+      'useWorkspaces: SnapshotSelectorHook<import(\'./workspaces/service.ts\').WorkspaceListState>',
+    ],
+    keyDomain: '',
+    hookContext: '',
+    slotInject: '',
+    declaredBy: 'an entry in \'root\' (client-ui-layout), so it exists while that entry is mounted',
+    occupants: [
+      'client-ui-browser BottomPanel',
+    ],
+    replaceRisk: 'shadows-shipped-ui',
+    example: 'return {\n  inject: [\'slots\'],\n  apply(ctx) {\n    ctx.slots.inject(\'shell.bottom-panel\', () => ctx.slots.register(\n      { name: \'shell.bottom-panel\' },\n      () => React.createElement(\'div\', null, \'hello\'),\n    ))\n  },\n}',
+    source: 'packages/client/ui-layout/src/client/index.ts:82',
+  },
+  {
     key: 'shell.overlay',
     kind: 'list',
     scope: 'root',
@@ -1554,7 +1581,33 @@ export const CLIENT_SLOT_API: readonly ClientSlotEntry[] = [
     occupants: [],
     replaceRisk: 'none',
     example: 'return {\n  inject: [\'slots\'],\n  apply(ctx) {\n    ctx.slots.inject(\'shell.overlay\', () => ctx.slots.register(\n      { name: \'shell.overlay\', id: \'my-entry\', order: 100, label: \'My entry\' },\n      () => React.createElement(\'div\', null, \'hello\'),\n    ))\n  },\n}',
-    source: 'packages/client/ui-layout/src/client/index.ts:83',
+    source: 'packages/client/ui-layout/src/client/index.ts:93',
+  },
+  {
+    key: 'shell.utility-panel',
+    kind: 'single',
+    scope: 'root',
+    summary: 'The rightmost docked utility column.',
+    doc: 'The rightmost docked utility column. Its occupant takes layout space\nfrom the center instead of covering the application and owns any inner\ntool navigation it exposes. Absent an occupant the column has zero\nwidth. Register one utility-shell owner here; floating surfaces still\nbelong in `shell.overlay`.',
+    registerOptions: [],
+    ownerProps: [
+      '/** Utility panel owner share: the occupant owns its visible width and contents. */\nexport interface UtilityPanelOwnerProps {}',
+    ],
+    ownerPropsReferences: [],
+    standardProps: [
+      'useSessions: SnapshotSelectorHook<SessionListState>',
+      'useWorkspaces: SnapshotSelectorHook<import(\'./workspaces/service.ts\').WorkspaceListState>',
+    ],
+    keyDomain: '',
+    hookContext: '',
+    slotInject: '',
+    declaredBy: 'an entry in \'root\' (client-ui-layout), so it exists while that entry is mounted',
+    occupants: [
+      'client-ui-browser BrowserPanel',
+    ],
+    replaceRisk: 'shadows-shipped-ui',
+    example: 'return {\n  inject: [\'slots\'],\n  apply(ctx) {\n    ctx.slots.inject(\'shell.utility-panel\', () => ctx.slots.register(\n      { name: \'shell.utility-panel\' },\n      () => React.createElement(\'div\', null, \'hello\'),\n    ))\n  },\n}',
+    source: 'packages/client/ui-layout/src/client/index.ts:80',
   },
   {
     key: 'sidebar',

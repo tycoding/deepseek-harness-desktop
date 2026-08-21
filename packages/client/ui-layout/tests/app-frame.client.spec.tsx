@@ -96,7 +96,7 @@ function mountFrame() {
 }
 
 function tracks(frame: HTMLElement): number[] {
-  const m = /^(\d+)px minmax\(0, 1fr\) (\d+)px$/.exec(frame.style.gridTemplateColumns)
+  const m = /^(\d+)px minmax\(0, 1fr\) (\d+)px auto$/.exec(frame.style.gridTemplateColumns)
   if (m === null) throw new Error(`unexpected template: ${frame.style.gridTemplateColumns}`)
   return [Number(m[1]), Number(m[2])]
 }
@@ -137,7 +137,7 @@ afterEach(() => {
 })
 
 describe('AppFrame', () => {
-  it('renders three tracks from store state', () => {
+  it('renders the fixed tracks and automatic utility column from store state', () => {
     const { frame } = mountFrame()
     expect(tracks(frame)).toEqual([280, 0])
   })
@@ -217,6 +217,8 @@ describe('AppFrame', () => {
   it('sidebar slot receives live concession output as owner props', () => {
     const { slotCalls } = mountFrame()
     expect(slotCalls.find(c => c.key === 'sidebar')!.props).toEqual({ collapsed: false, width: 280 })
+    expect(slotCalls.find(c => c.key === 'shell.utility-panel')!.props).toEqual({})
+    expect(slotCalls.find(c => c.key === 'shell.overlay')!.props).toEqual({})
   })
 
   it('sidebar drag widens through rAF-batched pointer moves', () => {

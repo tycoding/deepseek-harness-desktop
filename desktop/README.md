@@ -4,6 +4,8 @@ English | [中文](README.zh.md)
 
 This directory builds the official DeepSeek Harness Web application as an Electron desktop application. The installer includes the runtime required by the application, so end users do not need to install Node.js or npm. Packaging uses the official DeepSeek icon from `website/public/favicon.svg`.
 
+On macOS, the application uses an inset title bar so the native window controls sit inside the left navigation area. Desktop-only material, spacing, drag-region, and translucent-sidebar rules live in `desktop/customizations/macos-shell.css`; they are injected only by the packaged macOS window and do not change the ordinary Web application.
+
 ## Prerequisites
 
 - Git
@@ -23,7 +25,7 @@ npm run dist
 
 `npm run dist` requires a clean `main` branch. It fetches the official repository's `master` branch before every build, applies all changes after the commit recorded in `desktop/upstream.json`, aligns the desktop version with the official root package, records the new official commit on `main`, installs and builds the official project, prepares the bundled runtime, verifies that the start page is available, and writes the installer to `desktop/dist/`.
 
-Paths in `desktop/protected-paths.json` belong to this repository and are excluded from official patches. This includes the whole `desktop/` directory, the bilingual repository home page, the desktop Agent Note, and the release workflow. If any other official update conflicts, the script rolls back the attempted update and stops without packaging stale or partially updated source. A rewritten official history also stops the build instead of silently replacing the recorded source line.
+Paths in `desktop/protected-paths.json` belong to this repository and are excluded from official patches. This includes the whole `desktop/` directory, the bilingual repository home page, the desktop and sidebar-browser Agent Notes, the sidebar-browser package, and the release workflow. If any other official update conflicts, the script rolls back the attempted update and stops without packaging stale or partially updated source. A rewritten official history also stops the build instead of silently replacing the recorded source line.
 
 `npm run dist:current` packages an already synchronized revision and is reserved for the release workflow. It verifies version alignment but does not fetch source.
 
@@ -48,3 +50,5 @@ npm start
 The desktop repository uses `main` for its own history and an `upstream` remote for `https://github.com/deepseek-ai/deepseek-harness.git`. The sync script creates `upstream` when it is absent and rejects it when it points to another repository. Release tags use `v<official-version>`.
 
 The application stores its startup log in the Electron user-data directory under `logs/desktop.log`. DeepSeek Harness keeps its normal user settings and workspace behavior.
+
+The desktop preload exposes one isolated operation for the docked browser: reading an absolute `.html` or `.htm` file no larger than 10 MB. It returns text only, accepts requests only from the main application window, and does not expose Node.js or Electron APIs to either the application page or embedded HTML.

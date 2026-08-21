@@ -97,6 +97,22 @@ export const IconPanelLeftOutline16 = ({ size = 16, className }: IconProps) => (
   </svg>
 )
 
+/** Right-docked panel outline. */
+export const IconPanelRightOutline16 = ({ size = 16, className }: IconProps) => (
+  <svg width={size} height={size} className={className} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="1.25" y="1.75" width="13.5" height="12.5" rx="2.25" stroke="currentColor" strokeWidth="1.35" />
+    <path d="M10.75 2.25V13.75" stroke="currentColor" strokeWidth="1.35" strokeLinecap="round" />
+  </svg>
+)
+
+/** Bottom-docked panel outline. */
+export const IconPanelBottomOutline16 = ({ size = 16, className }: IconProps) => (
+  <svg width={size} height={size} className={className} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="1.25" y="1.75" width="13.5" height="12.5" rx="2.25" stroke="currentColor" strokeWidth="1.35" />
+    <path d="M1.75 10.25H14.25" stroke="currentColor" strokeWidth="1.35" strokeLinecap="round" />
+  </svg>
+)
+
 /** ic_ds_ellipsis_outline_16 */
 export const IconEllipsisOutline16 = ({ size = 16, className }: IconProps) => (
   <svg width={size} height={size} className={className} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">

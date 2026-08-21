@@ -4,6 +4,8 @@
 
 本目录把官方 DeepSeek Harness Web 应用打包为 Electron 桌面软件。安装包包含软件运行所需的环境，最终用户无需安装 Node.js 或 npm。打包使用 `website/public/favicon.svg` 中的 DeepSeek 官方图标。
 
+在 macOS 中，软件使用内嵌标题栏，让系统自带的红黄绿窗口按钮位于左侧导航区域。桌面专用的材质、间距、窗口拖动区域和半透明侧边栏规则集中保存在 `desktop/customizations/macos-shell.css`，只由打包后的 macOS 窗口注入，不会改变普通网页版本。
+
 ## 准备条件
 
 - Git
@@ -23,7 +25,7 @@ npm run dist
 
 `npm run dist` 要求当前位于干净的 `main` 分支。它会在每次打包前拉取官方仓库的 `master` 分支，应用 `desktop/upstream.json` 所记录版本之后的全部变化，使桌面版版本号与官方根目录保持一致，在 `main` 中记录新的官方版本，然后安装并构建官方项目、整理安装包内置的运行环境、确认真实启动页面可访问，最后把安装包写入 `desktop/dist/`。
 
-`desktop/protected-paths.json` 中的路径由本仓库独立维护，不接受官方补丁改写，其中包括整个 `desktop/` 目录、仓库双语首页、桌面版 Agent Note 和发布流程。如果其他官方更新发生冲突，脚本会撤销本次更新并停止，不会使用陈旧或只更新了一部分的代码继续打包。如果官方历史被改写，脚本也会直接停止，不会悄悄替换已经记录的代码来源。
+`desktop/protected-paths.json` 中的路径由本仓库独立维护，不接受官方补丁改写，其中包括整个 `desktop/` 目录、仓库双语首页、桌面版与侧边栏浏览器 Agent Note、侧边栏浏览器包和发布流程。如果其他官方更新发生冲突，脚本会撤销本次更新并停止，不会使用陈旧或只更新了一部分的代码继续打包。如果官方历史被改写，脚本也会直接停止，不会悄悄替换已经记录的代码来源。
 
 `npm run dist:current` 只打包已经完成同步的版本，专供发布流程使用。它会检查版本号，但不会拉取源码。
 
@@ -48,3 +50,5 @@ npm start
 桌面仓库使用 `main` 保存自身历史，并使用名为 `upstream` 的远程地址连接 `https://github.com/deepseek-ai/deepseek-harness.git`。缺少 `upstream` 时，同步脚本会自动创建；如果它指向其他仓库，脚本会拒绝继续。发布标签使用 `v<官方版本号>`。
 
 软件把启动日志保存在 Electron 用户数据目录下的 `logs/desktop.log`。DeepSeek Harness 继续使用自身原有的用户设置和工作目录规则。
+
+桌面预加载只向固定式浏览器提供一项隔离操作：读取不超过 10 MB 的绝对 `.html` 或 `.htm` 文件。它只返回文本，只接受主应用窗口的请求，也不会向应用页面或嵌入的 HTML 开放 Node.js 或 Electron API。

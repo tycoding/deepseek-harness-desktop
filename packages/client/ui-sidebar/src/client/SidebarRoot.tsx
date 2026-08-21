@@ -114,6 +114,7 @@ export function SidebarRoot({
   return (
     <div
       ref={column}
+      data-sidebar-shell
       className={clsx(
         css.root, !wide && css.collapsed, !wide && everWide.current && css.railIn,
         collapsed && wide && css.fading, !pointerInside && css.quietBars,

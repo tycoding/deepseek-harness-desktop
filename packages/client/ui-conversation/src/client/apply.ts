@@ -27,6 +27,10 @@ import { ComposerSubmissionPolicy } from './input/submission-policy.ts'
 import { InputBar } from './skeleton/InputBar.tsx'
 import { EnterBehaviorRow } from './settings/EnterBehaviorRow.tsx'
 import type { EnterBehaviorRowInjected } from './settings/EnterBehaviorRow.tsx'
+
+interface BrowserPathOpener {
+  openPath(path: string): Promise<boolean>
+}
 import { ChatView } from './chat/ChatView.tsx'
 import { StatsLine } from './chat/StatsLine.tsx'
 import { ApprovalPanel } from './skeleton/ApprovalPanel.tsx'
@@ -396,9 +400,19 @@ export function apply(ctx: Context): void {
           layout.openDetails()
         },
         fileMentions: owner => ctx.get('chatFileMentions')?.forClosing(owner),
-        openFile: (path) => {
+        openFile: async (path) => {
           const cwd = sessions.list.getSnapshot().byId[sessionId]?.cwd
-          return workspaces.openPath(resolveWorkspacePath(cwd, path))
+          const resolved = resolveWorkspacePath(cwd, path)
+          const openNative = async (): Promise<void> => {
+            await workspaces.openPath(resolved).catch(() => {
+              // Host/OS open failures stay silent in the chat row; the native
+              // app surfaces its own error dialog when the path is unusable.
+            })
+          }
+          const browser = ctx.get('browser') as BrowserPathOpener | undefined
+          if (browser === undefined) return openNative()
+          const opened = await browser.openPath(resolved).catch(() => false)
+          if (!opened) await openNative()
         },
         loadOlder: () => { void scoped.loadOlder() },
         loadImage: attachment => conversation.resolveImage(sessionId, attachment),

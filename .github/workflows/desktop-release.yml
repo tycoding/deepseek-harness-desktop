@@ -98,8 +98,8 @@ jobs:
         with:
           name: ${{ matrix.artifact }}
           path: |
-            desktop/dist/*.dmg
-            desktop/dist/*.exe
+            desktop/dist/current/*.dmg
+            desktop/dist/current/*.exe
           if-no-files-found: error
           retention-days: 7
 

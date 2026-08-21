@@ -5,9 +5,10 @@ asar: true
 npmRebuild: false
 nodeGypRebuild: false
 directories:
-  output: dist
+  output: dist/current
 files:
   - src/**/*
+  - customizations/**/*
   - package.json
 extraResources:
   - from: runtime

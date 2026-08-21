@@ -1,0 +1,68 @@
+:root {
+  background: #f7f7f5 !important;
+}
+
+body,
+#root,
+[data-dsh-app-frame] {
+  background: var(--dsw-alias-bg-base, #f7f7f5) !important;
+}
+
+/* Keep the native macOS window controls inside the original sidebar without
+   introducing a separate application header. */
+[data-shell-sidebar] {
+  position: relative;
+  border-right: none !important;
+}
+
+[data-shell-sidebar]::before {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 48px;
+  content: '';
+  -webkit-app-region: drag;
+}
+
+[data-shell-sidebar]::after {
+  position: absolute;
+  z-index: 1;
+  top: 48px;
+  right: 0;
+  bottom: 0;
+  width: 1px;
+  content: '';
+  background: var(--dsw-alias-border-l1);
+  pointer-events: none;
+}
+
+[data-shell-sidebar] [data-sidebar-shell] {
+  padding-top: 28px;
+}
+
+/* The collapsed rail starts below the system controls. Its column stays in
+   the layout, but the area behind the controls remains the app surface. */
+[data-dsh-app-frame][data-sidebar-collapsed] [data-shell-sidebar] {
+  background: transparent;
+}
+
+[data-dsh-app-frame][data-sidebar-collapsed] [data-sidebar-shell] {
+  height: calc(100% - 48px);
+  margin-top: 48px;
+  padding-top: 0;
+}
+
+[data-shell-sidebar] button,
+[data-shell-sidebar] input,
+[data-shell-sidebar] [role='button'],
+[data-shell-sidebar] [role='treeitem'] {
+  -webkit-app-region: no-drag;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    background: #171716 !important;
+  }
+}
