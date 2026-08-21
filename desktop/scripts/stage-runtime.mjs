@@ -86,9 +86,28 @@ async function workspacePackageMap() {
   return packages
 }
 
+async function installedPackageMap() {
+  const manifests = globSync([
+    'node_modules/*/package.json',
+    'node_modules/@*/*/package.json',
+    'node_modules/.pnpm/*/node_modules/*/package.json',
+    'node_modules/.pnpm/*/node_modules/@*/*/package.json',
+  ], { cwd: root })
+  const packages = new Map()
+  for (const relative of manifests) {
+    const manifestPath = join(root, relative)
+    const installedManifest = JSON.parse(await readFile(manifestPath, 'utf8'))
+    if (typeof installedManifest.name === 'string' && !packages.has(installedManifest.name)) {
+      packages.set(installedManifest.name, dirname(manifestPath))
+    }
+  }
+  return packages
+}
+
 async function restoreWorkspaceClosure() {
   const nodeModules = join(runtime, 'node_modules')
   const workspacePackages = await workspacePackageMap()
+  const installedPackages = await installedPackageMap()
   let restored = 0
   while (true) {
     let changed = false
@@ -103,7 +122,7 @@ async function restoreWorkspaceClosure() {
       for (const name of required) {
         const destination = packagePath(nodeModules, name)
         if (existsSync(destination)) continue
-        const source = workspacePackages.get(name)
+        const source = workspacePackages.get(name) ?? installedPackages.get(name)
         if (source === undefined) continue
         const nestedNodeModules = join(source, 'node_modules')
         await mkdir(dirname(destination), { recursive: true })

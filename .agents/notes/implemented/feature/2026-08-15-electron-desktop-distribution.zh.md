@@ -20,7 +20,7 @@ macOS 窗口使用隐藏式内嵌标题栏，把系统原生红黄绿按钮放�
 
 `desktop/protected-paths.json` 列出不接受官方补丁改写的本仓库路径，其中包括整个 `desktop/` 目录、根目录双语首页、本 Agent Note 和桌面发布流程。除此之外的文件继续以官方源码为准。应用图标使用 `website/public/favicon.svg` 中的 DeepSeek 官方资源。
 
-运行环境整理过程通过跨平台子进程启动器使用官方构建和部署方式，补齐部署依赖中遗漏但运行所需的工作区包，把包管理器链接替换为实际文件，并为 Electron 重新构建本机终端支持。启动器可以解析 Windows 命令包装文件，同时不改变 Unix 系统使用的命令。Windows 原生目录选择器以 `ELECTRON_RUN_AS_NODE=1` 启动对话框 worker，因为打包环境中的 `process.execPath` 指向 Electron，子进程必须执行内置 CommonJS worker 而不是重新打开应用。生成安装包前，冒烟测试会使用 Electron 内置的 Node.js 启动整理后的服务，并要求真实起始页可以正常访问。
+运行环境整理过程通过跨平台子进程启动器使用官方构建和部署方式，递归补齐部署依赖中遗漏但运行所需的工作区包与注册表包，把包管理器链接替换为实际文件，并为 Electron 重新构建本机终端支持。启动器可以解析 Windows 命令包装文件，同时不改变 Unix 系统使用的命令。Windows 原生目录选择器以 `ELECTRON_RUN_AS_NODE=1` 启动对话框 worker，因为打包环境中的 `process.execPath` 指向 Electron，子进程必须执行内置 CommonJS worker 而不是重新打开应用。生成安装包前，冒烟测试会使用 Electron 内置的 Node.js 启动整理后的服务，并要求真实起始页可以正常访问。
 
 每个操作系统生成自己的原生文件：macOS 生成 DMG，Windows 生成 NSIS 安装程序，Linux 生成 AppImage。本项目不承诺在一台电脑上交叉生成其他系统的安装包。桌面发布流程每 30 分钟检查一次官方 `master`，把新提交同步到 `main`，在官方版本号变化后使用 GitHub 的原生 macOS 和 Windows 环境生成安装包，并只在对应标签不存在时创建不可变的 `v<官方版本号>` 发布版本。每个新发布版本都会成为本仓库的最新可用版本，即使官方版本号包含预发布标识。
 
