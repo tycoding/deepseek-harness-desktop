@@ -75,9 +75,11 @@ jobs:
           - name: macOS
             os: macos-15
             artifact: desktop-macos
+            target: --mac dmg
           - name: Windows
             os: windows-2025
             artifact: desktop-windows
+            target: --win nsis
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v6
@@ -98,14 +100,18 @@ jobs:
         run: npm ci --prefix desktop
 
       - name: Build installer
-        run: npm --prefix desktop run dist:current
+        working-directory: desktop
+        run: |
+          npm run prepare:runtime
+          npm run smoke
+          npx electron-builder --config electron-builder.yml ${{ matrix.target }} --publish never
 
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact }}
           path: |
-            desktop/dist/current/*.dmg
-            desktop/dist/current/*.exe
+            desktop/dist/current/**/*.dmg
+            desktop/dist/current/**/*.exe
           if-no-files-found: error
           retention-days: 7
 
