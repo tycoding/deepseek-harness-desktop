@@ -11,7 +11,7 @@ import type {
 import LlmRuntime, { createUserMessage, CallId } from '@deepseek-ai/dsh-llm'
 import type { Message, ToolSchema } from '@deepseek-ai/dsh-llm'
 import * as LlmPiAi from '@deepseek-ai/dsh-llm-pi-ai'
-import type { PiAiReplayState } from '../src/replay.ts'
+import type { PiAiReplayResponse } from '../src/replay.ts'
 import { assemble, type AssembledResult } from './assemble.ts'
 
 interface ProviderCase {
@@ -70,6 +70,7 @@ async function harness(image?: StoredImageAttachment): Promise<Context> {
         maxImagesPerMessage: 1,
         maxMessageImageBytes: fixture.data.byteLength,
         maxImagePixels: fixture.ref.width * fixture.ref.height,
+        maxImageDimension: Math.max(fixture.ref.width, fixture.ref.height),
         mediaTypes: [fixture.ref.mediaType],
       }
 
@@ -118,18 +119,20 @@ function expectFinish(result: AssembledResult, expected: 'stop' | 'tool-calls'):
   expect(result.finish.kind).toBe(expected)
 }
 
-function expectNativeReplay(result: AssembledResult, profile: ProviderCase): PiAiReplayState {
+function expectNativeReplay(result: AssembledResult, profile: ProviderCase): PiAiReplayResponse {
   const replayState = result.message.source.kind === 'model'
     ? result.message.source.replayState
     : undefined
   expect(replayState).toMatchObject({
-    kind: 'pi-ai',
-    version: 1,
-    api: profile.api,
-    provider: profile.provider,
-    model: profile.model,
+    response: {
+      kind: 'pi-ai',
+      version: 2,
+      api: profile.api,
+      provider: profile.provider,
+      model: profile.model,
+    },
   })
-  return replayState as PiAiReplayState
+  return (replayState as { response: PiAiReplayResponse }).response
 }
 
 const lookupTool: ToolSchema = {
@@ -207,7 +210,7 @@ for (const profile of providerCases) {
       if (profile.provider === 'anthropic') {
         it('sends a real image through the authenticated Anthropic visual path', async () => {
           const data = new Uint8Array(await readFile(
-            new URL('../../../../assets/community-wecom-survey.png', import.meta.url),
+            new URL('./fixtures/qr-code.png', import.meta.url),
           ))
           const ref: ImageAttachmentRef = {
             attachmentId: AttachmentId(`sha256:${'a'.repeat(64)}`),
